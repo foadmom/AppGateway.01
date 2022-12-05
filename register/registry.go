@@ -1,5 +1,11 @@
 package register
 
+import (
+	s "ServiceTools/service"
+	t "ServiceTools/types"
+	"errors"
+)
+
 type Registry struct {
 	Register map[string]*ServiceList
 }
@@ -7,6 +13,9 @@ type Registry struct {
 var ServiceRegister Registry = Registry{}
 var ServiceRegisterPtr *Registry = &ServiceRegister
 
+// ==================================================================
+//
+// ==================================================================
 func init() {
 	ServiceRegister.Register = make(map[string]*ServiceList)
 }
@@ -34,18 +43,18 @@ func init() {
 //	    Add serviceName list to registry map
 //
 // ==================================================================
-func UpdateStatus(receivedServiceInfo *ServiceInfo) error {
+func UpdateStatus(receivedServiceInfo s.ServiceInfo) error {
 	var _err error
 
-	var _matchedService *ServiceInfo
+	var _matchedService *s.ServiceInfo
 	var _serviceList *ServiceList = ServiceRegisterPtr.Register[receivedServiceInfo.Name]
 	if _serviceList == nil {
-		_serviceList = ServiceRegisterPtr.createAndAddServiceList(receivedServiceInfo)
+		_serviceList = ServiceRegisterPtr.createAndAddServiceList(&receivedServiceInfo)
 	} else {
-		_matchedService = _serviceList.findServiceInfoRecord(receivedServiceInfo)
+		_matchedService = _serviceList.findServiceInfoRecord(&receivedServiceInfo)
 	}
 	if _matchedService == nil {
-		_serviceList.addService(receivedServiceInfo)
+		_serviceList.addService(&receivedServiceInfo)
 	} else {
 		_matchedService.Status = receivedServiceInfo.Status
 		_matchedService.TimeStamp = receivedServiceInfo.TimeStamp
@@ -55,11 +64,56 @@ func UpdateStatus(receivedServiceInfo *ServiceInfo) error {
 	return _err
 }
 
-func FindService(serviceName string) *ServiceInfo {
-	return ServiceRegisterPtr.findService(serviceName)
+// ==================================================================
+//
+// ==================================================================
+func FindService(serviceName string) s.ServiceInfo {
+	var _serviceInfo s.ServiceInfo
+	_serviceInfo = *(ServiceRegisterPtr.findService(serviceName))
+	return _serviceInfo
 }
 
-func (r *Registry) createAndAddServiceList(receivedServiceInfo *ServiceInfo) *ServiceList {
+// ==================================================================
+//
+// ==================================================================
+func DrainService(receivedServiceInfo s.ServiceInfo) error {
+	var _err error
+
+	var _matchedService *s.ServiceInfo
+	var _serviceList *ServiceList = ServiceRegisterPtr.Register[receivedServiceInfo.Name]
+	if _serviceList == nil {
+		_err = errors.New("No such service has been registered")
+	} else {
+		_matchedService = _serviceList.findServiceInfoRecord(&receivedServiceInfo)
+	}
+	if _matchedService == nil {
+		_err = errors.New("No such service has been registered")
+	} else {
+		_matchedService.Status = t.DRAINING
+		_matchedService.TimeStamp = receivedServiceInfo.TimeStamp
+	}
+	_serviceList.checkForDeadService()
+
+	return _err
+}
+
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+// ==================================================================
+//
+// ==================================================================
+func (r *Registry) createAndAddServiceList(receivedServiceInfo *s.ServiceInfo) *ServiceList {
 	var _serviceList *ServiceList = createServiceList()
 	r.Register[receivedServiceInfo.Name] = _serviceList
 	return _serviceList
@@ -78,8 +132,8 @@ func (r *Registry) createAndAddServiceList(receivedServiceInfo *ServiceInfo) *Se
 // else return nil
 // Do we need a config backup in case heartbeat
 // ==================================================================
-func (r *Registry) findService(serviceName string) *ServiceInfo {
-	var _service *ServiceInfo = nil
+func (r *Registry) findService(serviceName string) *s.ServiceInfo {
+	var _service *s.ServiceInfo = nil
 	var _serviceList *ServiceList = r.Register[serviceName]
 	if _serviceList != nil {
 		_service = _serviceList.getService()
@@ -88,6 +142,9 @@ func (r *Registry) findService(serviceName string) *ServiceInfo {
 	return _service
 }
 
+// ==================================================================
+//
+// ==================================================================
 func getRegistry() *Registry {
 	return ServiceRegisterPtr
 }

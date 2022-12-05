@@ -1,30 +1,41 @@
 package register
 
-import "time"
+import (
+	s "ServiceTools/service"
+	t "ServiceTools/types"
+	"time"
+)
 
 // ===================================
 // ===================================
 type ServiceList struct {
-	Services     []*ServiceInfo
+	Services     []*s.ServiceInfo
 	CurrentIndex int
 }
 
-// ===================================
-// ===================================
+// ==================================================================
+//
+// ==================================================================
 func createServiceList() *ServiceList {
-	var _services []*ServiceInfo = make([]*ServiceInfo, 0)
+	var _services []*s.ServiceInfo = make([]*s.ServiceInfo, 0)
 	var _serviceList ServiceList = ServiceList{_services, 0}
 
 	return &_serviceList
 }
 
-func (b *ServiceList) addService(service *ServiceInfo) {
+// ==================================================================
+//
+// ==================================================================
+func (b *ServiceList) addService(service *s.ServiceInfo) {
 	b.Services = append(b.Services, service)
 }
 
+// ==================================================================
+//
+// ==================================================================
 func (b *ServiceList) checkForDeadService() {
 	for _index := 0; _index < len(b.Services); _index++ {
-		if b.Services[_index].Status != ONLINE {
+		if b.Services[_index].Status != t.ONLINE {
 			var _now uint = uint(time.Now().UnixMilli())
 			var _lastUpdated uint = uint(b.Services[_index].TimeStamp.UnixMilli())
 
@@ -32,7 +43,7 @@ func (b *ServiceList) checkForDeadService() {
 			if _diff < 0 {
 				return
 			}
-			if _diff > DROP_DEAD_TIMEOUT {
+			if _diff > t.DROP_DEAD_TIMEOUT {
 				b.removeService(_index)
 			}
 
@@ -40,6 +51,9 @@ func (b *ServiceList) checkForDeadService() {
 	}
 }
 
+// ==================================================================
+//
+// ==================================================================
 func (b *ServiceList) removeService(index int) {
 	var _len int = len(b.Services)
 	b.Services[index] = b.Services[_len-1]
@@ -71,7 +85,10 @@ func (b *ServiceList) adjustIndex() {
 	b.CurrentIndex = _index
 }
 
-func (b *ServiceList) getService() *ServiceInfo {
+// ==================================================================
+//
+// ==================================================================
+func (b *ServiceList) getService() *s.ServiceInfo {
 	var _len int = len(b.Services)
 
 	b.adjustIndex()
@@ -80,7 +97,7 @@ func (b *ServiceList) getService() *ServiceInfo {
 	}
 
 	for _loopIndex := 0; _loopIndex < _len; _loopIndex++ {
-		if b.Services[b.CurrentIndex].Status == ONLINE {
+		if b.Services[b.CurrentIndex].Status == t.ONLINE {
 			return b.Services[b.CurrentIndex]
 		} else {
 			b.adjustIndex()
@@ -89,11 +106,14 @@ func (b *ServiceList) getService() *ServiceInfo {
 	return nil
 }
 
-func (b *ServiceList) findServiceInfoRecord(thisServiceInfo *ServiceInfo) *ServiceInfo {
+// ==================================================================
+//
+// ==================================================================
+func (b *ServiceList) findServiceInfoRecord(thisServiceInfo *s.ServiceInfo) *s.ServiceInfo {
 	var _len int = len(b.Services)
 
 	for _loopIndex := 0; _loopIndex < _len; _loopIndex++ {
-		var _nextService *ServiceInfo = b.Services[_loopIndex]
+		var _nextService *s.ServiceInfo = b.Services[_loopIndex]
 		if (_nextService.Name == thisServiceInfo.Name) &&
 			(_nextService.Host == thisServiceInfo.Host) &&
 			(_nextService.Port == thisServiceInfo.Port) {

@@ -1,6 +1,8 @@
 package register
 
 import (
+	s "ServiceTools/service"
+	"ServiceTools/types"
 	"testing"
 	"time"
 )
@@ -13,25 +15,25 @@ import (
 // 	TimeStamp time.Time
 // }
 
-var ServiceArray []ServiceInfo = []ServiceInfo{
-	{"AccountService-A", "host-11", "8080", ONLINE, time.Now()},
-	{"AccountService-A", "host-12", "8080", ONLINE, time.Now()},
-	{"AccountService-A", "host-13", "8080", ONLINE, time.Now()},
-	{"AccountService-A", "host-14", "8080", ONLINE, time.Now()},
-	{"AccountService-B", "host-21", "8080", ONLINE, time.Now()},
-	{"AccountService-B", "host-22", "8080", ONLINE, time.Now()},
-	{"AccountService-B", "host-23", "8080", ONLINE, time.Now()},
-	{"AccountService-B", "host-24", "8080", ONLINE, time.Now()},
-	{"AccountService-C", "host-31", "8080", ONLINE, time.Now()},
-	{"AccountService-C", "host-32", "8080", ONLINE, time.Now()},
-	{"AccountService-C", "host-33", "8080", ONLINE, time.Now()},
-	{"AccountService-D", "host-41", "8080", ONLINE, time.Now()},
-	{"AccountService-D", "host-42", "8080", ONLINE, time.Now()},
+var ServiceArray []s.ServiceInfo = []s.ServiceInfo{
+	{Name: "AccountService-A", Host: "host-11", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-A", Host: "host-12", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-A", Host: "host-13", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-A", Host: "host-14", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-B", Host: "host-21", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-B", Host: "host-22", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-B", Host: "host-23", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-B", Host: "host-24", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-C", Host: "host-31", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-C", Host: "host-32", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-C", Host: "host-33", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-D", Host: "host-41", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
+	{Name: "AccountService-D", Host: "host-42", Port: "8080", Status: types.ONLINE, TimeStamp: time.Now()},
 }
 
 func loadTestData() {
 	for _index := 0; _index < len(ServiceArray); _index++ {
-		UpdateStatus(&ServiceArray[_index])
+		UpdateStatus(ServiceArray[_index])
 	}
 }
 
@@ -41,15 +43,15 @@ func printRgistry(t *testing.T, _registry *Registry) {
 	}
 }
 
-func printService(t *testing.T, service *ServiceInfo) {
+func printService(t *testing.T, service *s.ServiceInfo) {
 	t.Logf("service  %s    host=%s\n", service.Name, service.Host)
 }
 
-func findService(t *testing.T, serviceName string) *ServiceInfo {
-	var _service *ServiceInfo
+func findService(t *testing.T, serviceName string) s.ServiceInfo {
+	var _service s.ServiceInfo
 	for _index := 0; _index < 6; _index++ {
 		_service = FindService("AccountService-B")
-		printService(t, _service)
+		printService(t, &_service)
 	}
 	t.Log("===============================\n")
 	return _service
@@ -61,7 +63,7 @@ func TestFindService(t *testing.T) {
 	findService(t, "AccountService-B")
 	_service := FindService("AccountService-B")
 	t.Logf("\n............... %s\n", _service.Host)
-	_service.Status = OFFLINE
+	_service.Status = types.OFFLINE
 	UpdateStatus(_service)
 	_service = findService(t, "AccountService-B")
 	_service = findService(t, "AccountService-B")

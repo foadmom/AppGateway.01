@@ -1,10 +1,12 @@
 package health
 
-//	"ServiceTools/types"
+import (
+	"ServiceTools/service"
+)
 
-// func ListenForServiceInfo(transport types.Transport) (types.ServiceInfo, error) {
-// 	var _err error
-// 	var _serviceInfo ServiceInfo
+func ListenForServiceInfo() (service.ServiceInfo, error) {
+	var _err error
+	var _serviceInfo service.ServiceInfo
 
-// 	return _serviceInfo, _err
-// }
+	return _serviceInfo, _err
+}
