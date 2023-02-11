@@ -1,8 +1,10 @@
 package register
 
 import (
-	s "ServiceTools/service"
-	"ServiceTools/types"
+	s "AppGateway/service"
+	"AppGateway/types"
+	"fmt"
+	"log"
 	"testing"
 	"time"
 )
@@ -37,12 +39,6 @@ func loadTestData() {
 	}
 }
 
-func printRgistry(t *testing.T, _registry *Registry) {
-	for _key, _value := range _registry.Register {
-		t.Logf("key=%s  value=%v\n", _key, _value)
-	}
-}
-
 func printService(t *testing.T, service *s.ServiceInfo) {
 	t.Logf("service  %s    host=%s\n", service.Name, service.Host)
 }
@@ -58,8 +54,10 @@ func findService(t *testing.T, serviceName string) s.ServiceInfo {
 }
 
 func TestFindService(t *testing.T) {
+	log.Println("TestFindService starting")
 	loadTestData()
-	printRgistry(t, getRegistry())
+	fmt.Printf(GetRegistry().ToString())
+	//	PrintRegistry(GetRegistry())
 	findService(t, "AccountService-B")
 	_service := FindService("AccountService-B")
 	t.Logf("\n............... %s\n", _service.Host)

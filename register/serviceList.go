@@ -1,8 +1,8 @@
 package register
 
 import (
-	s "ServiceTools/service"
-	t "ServiceTools/types"
+	s "AppGateway/service"
+	t "AppGateway/types"
 	"time"
 )
 
@@ -121,4 +121,17 @@ func (b *ServiceList) findServiceInfoRecord(thisServiceInfo *s.ServiceInfo) *s.S
 		}
 	}
 	return nil
+}
+
+// ==================================================================
+//
+// ==================================================================
+func (sl *ServiceList) ToString() string {
+	var _list string
+
+	for _, _item := range sl.Services {
+		_list = _list + _item.ToString() + "\n"
+	}
+
+	return _list
 }

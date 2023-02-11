@@ -1,8 +1,8 @@
 package register
 
 import (
-	s "ServiceTools/service"
-	t "ServiceTools/types"
+	s "AppGateway/service"
+	t "AppGateway/types"
 	"errors"
 )
 
@@ -145,6 +145,15 @@ func (r *Registry) findService(serviceName string) *s.ServiceInfo {
 // ==================================================================
 //
 // ==================================================================
-func getRegistry() *Registry {
+func GetRegistry() *Registry {
 	return ServiceRegisterPtr
+}
+
+func (r *Registry) ToString() string {
+	var _registrySt string
+	for _key, _value := range r.Register {
+		_registrySt = _registrySt + _key + "="
+		_registrySt = _registrySt + _value.ToString() + "\n"
+	}
+	return _registrySt
 }
