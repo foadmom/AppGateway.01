@@ -27,6 +27,13 @@ func init() {
 // ==================================================================
 
 // ==================================================================
+//
+// ==================================================================
+func GetRegistry() *Registry {
+	return ServiceRegisterPtr
+}
+
+// ==================================================================
 // Check if there is a serviceName list for the service name
 // If list for serviceName exists
 //
@@ -97,6 +104,15 @@ func DrainService(receivedServiceInfo s.ServiceInfo) error {
 	return _err
 }
 
+func (r *Registry) ToString() string {
+	var _registrySt string
+	for _key, _value := range r.Register {
+		_registrySt = _registrySt + _key + "="
+		_registrySt = _registrySt + _value.ToString() + "\n"
+	}
+	return _registrySt
+}
+
 // ==================================================================
 // ==================================================================
 // ==================================================================
@@ -105,10 +121,7 @@ func DrainService(receivedServiceInfo s.ServiceInfo) error {
 // ==================================================================
 // ==================================================================
 // ==================================================================
-// ==================================================================
-// ==================================================================
-// ==================================================================
-// ==================================================================
+// internal functions
 // ==================================================================
 // ==================================================================
 //
@@ -140,20 +153,4 @@ func (r *Registry) findService(serviceName string) *s.ServiceInfo {
 	}
 
 	return _service
-}
-
-// ==================================================================
-//
-// ==================================================================
-func GetRegistry() *Registry {
-	return ServiceRegisterPtr
-}
-
-func (r *Registry) ToString() string {
-	var _registrySt string
-	for _key, _value := range r.Register {
-		_registrySt = _registrySt + _key + "="
-		_registrySt = _registrySt + _value.ToString() + "\n"
-	}
-	return _registrySt
 }
